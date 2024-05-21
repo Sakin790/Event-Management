@@ -18,12 +18,18 @@
         class="mt-2 py-2 px-3 bg-blue-500 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
         Find
       </button>
+      <button v-if="apiResponse" type="button" @click="copyToClipboard"
+        class="mt-2 py-2 px-3 bg-green-500 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+        Copy to Clipboard
+      </button>
     </form>
   </div>
 
   <div>
     <div class="container flex justify-center flex-col-1 mx-auto px-4 py-8">
-      <div v-if="loading" class="text-center text-xl font-bold">Loading...</div>
+      <div v-if="loading">
+        <Loading />
+      </div>
       <div v-else>
         <div v-if="apiResponse" class="flex flex-col space-y-4">
           <div class="text-xl font-bold">
@@ -47,6 +53,10 @@
 </template>
 
 <script>
+import Loading from './Loading.vue';
+import Toast from './Toast.vue';
+
+
 export default {
   data() {
     return {
@@ -55,6 +65,11 @@ export default {
       error: "",
       loading: false,
     };
+  },
+
+  components: {
+    Loading,
+    Toast
   },
   methods: {
     handleSubmit(event) {
@@ -82,6 +97,14 @@ export default {
         this.loading = false;
       }
     },
+    copyToClipboard() {
+      const textToCopy = JSON.stringify(this.apiResponse, null, 2);
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert("Text copied to clipboard")
+      }).catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+    }
   },
 };
 </script>
